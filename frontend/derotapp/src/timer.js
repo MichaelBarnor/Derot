@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import Summary from './summary';
+import Settings from './settings';
+import PastTask from './past-task';
 
 export default function Timer() {
   const [total, setTotal]     = useState(0);
@@ -7,8 +9,12 @@ export default function Timer() {
   const [doom, setDoom]       = useState(0);
   const [running, setRun]     = useState(false);
   const [inDoom, setDooming]  = useState(false);
+  const [showSummary, setShowSummary] = useState(false); // toggle summary modal
+  // New state variables for settings and past task modals:
+  const [showSettings, setShowSettings] = useState(false);
+  const [showPastTask, setShowPastTask] = useState(false);
+  
   const intervalRef = useRef(null);
-  const navigate    = useNavigate();
 
   // Create a ref to store the latest inDoom value
   const inDoomRef = useRef(inDoom);
@@ -20,7 +26,7 @@ export default function Timer() {
     setRun(true);
     intervalRef.current = setInterval(() => {
       setTotal(t => t + 1);
-      // Use the ref's current value so the callback gets the latest state
+      // Use the ref’s current value so the callback gets the latest state
       if (inDoomRef.current) {
         setDoom(d => d + 1);
       } else {
@@ -33,8 +39,8 @@ export default function Timer() {
 
   const end = () => {
     clearInterval(intervalRef.current);
-    // Pass stats via router state
-    navigate('/summary', { state: { total, focus, doom } });
+    // Instead of navigating, show the summary modal
+    setShowSummary(true);
   };
 
   useEffect(() => () => clearInterval(intervalRef.current), []);
@@ -58,6 +64,40 @@ export default function Timer() {
           </button>
           <button onClick={end}>End Task</button>
         </>
+      )}
+
+      {/* Buttons to open Settings and Past Task modals */}
+      <button className="my-button" onClick={() => setShowSettings(true)}>
+        Settings
+      </button>
+      <button className="my-button" onClick={() => setShowPastTask(true)}>
+        View Past Task
+      </button>
+
+      {/* Render Summary as a modal */}
+      {showSummary && (
+        <div className="modal">
+          <Summary 
+            total={total} 
+            focus={focus} 
+            doom={doom} 
+            onClose={() => setShowSummary(false)} 
+          />
+        </div>
+      )}
+
+      {/* Render Settings as a modal */}
+      {showSettings && (
+        <div className="modal">
+          <Settings onClose={() => setShowSettings(false)} />
+        </div>
+      )}
+
+      {/* Render Past Task as a modal */}
+      {showPastTask && (
+        <div className="modal">
+          <PastTask onClose={() => setShowPastTask(false)} />
+        </div>
       )}
     </div>
   );

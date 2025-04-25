@@ -1,11 +1,6 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 
-export default function Summary() {
-  const { state } = useLocation();
-  const { total=0, focus=0, doom=0 } = state || {};
-  const navigate = useNavigate();
-
+export default function Summary({ total=0, focus=0, doom=0, onClose }) {
   const fmt = s => {
     const mm = String(Math.floor(s / 60)).padStart(2, '0');
     const ss = String(s % 60).padStart(2, '0');
@@ -15,13 +10,13 @@ export default function Summary() {
   const pct = total ? ((doom / total) * 100).toFixed(1) : 0;
 
   return (
-    <div>
+    <div className="summary-popup">
       <h2>Task Summary</h2>
       <p>Total Time: {fmt(total)}</p>
       <p>Focus Time: {fmt(focus)}</p>
       <p>Doomscroll Time: {fmt(doom)}</p>
       <p>Doomscroll %: {pct}%</p>
-      <button onClick={() => navigate('/')}>Start Over</button>
+      <button onClick={onClose}>Close Summary</button>
     </div>
   );
 }
