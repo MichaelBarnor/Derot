@@ -32,9 +32,9 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Random Quote</h1>
+        <h1>We know you're screen time is crazy, so lets be mindful!</h1>
         {loading ? <p>Loading...</p> : <p>{quote}</p>}
-        <button onClick={fetchQuote}>Get Another Quote</button>
+        <a href="/mainpage.html" class="my-button">Let's start here</a>
       </header>
     </div>
   );
