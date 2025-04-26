@@ -1,3 +1,70 @@
+/* Global Styles */
+body {
+  background: #282c34; /* Dark background similar to Pomofocus */
+  color: #ffffff;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container for the timer (card style) */
+.timer-all {
+  background: rgba(255, 255, 255, 0.1); /* semi-transparent light overlay */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 5px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 400px;
+  margin: 30px auto; /* centers horizontally with extra spacing on top */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Timer wrapper to center content vertically (optional) */
+.timer-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* Remove or adjust the min-height value */
+  /* min-height: 100vh; */
+  /* Option 1: Remove min-height completely */
+  /* Option 2: Use a smaller value, e.g.: */
+  min-height: auto;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Reduce space below the Current Task heading */
+.timer-wrapper h2 {
+  margin-bottom: 0.01rem;  /* Adjust value as needed */
+}
+
+/* Timer container used for grouping elements */
+.timer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px auto;
+}
+
+/* Button styling */
+.my-button {
+  background: #ff4757; /* Red accent color */
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  margin: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.my-button:hover {
+  background: #e84118;
+}
+
+/* Modal remains unchanged */
 .modal {
   position: fixed;
   top: 0;
@@ -8,15 +75,38 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  color:white
 }
 
 .settings-popup,
 .past-task-popup,
 .summary-popup {
-  background: #fff;
+  background: #191818;
   padding: 20px;
   border-radius: 8px;
   width: 90%;
   max-width: 400px;
   text-align: center;
+}
+
+/* Nav container styling for Timer and Past Task buttons */
+.nav-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* add margin-top as desired */
+  margin-bottom: 20px;
+}
+
+.actions-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;  /* Adjust the gap value as desired */
+  margin-top: 10px;
+}
+
+.total-time {
+  font-size: 5rem; /* Increase this value as needed */
+  font-weight: bold;
+  color: #ffffff; /* Optional, ensures high contrast */
 }

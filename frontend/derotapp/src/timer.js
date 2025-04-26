@@ -9,11 +9,14 @@ export default function Timer() {
   const [doom, setDoom]       = useState(0);
   const [running, setRun]     = useState(false);
   const [inDoom, setDooming]  = useState(false);
-  const [showSummary, setShowSummary] = useState(false); // toggle summary modal
-  // New state variables for settings and past task modals:
+  const [showSummary, setShowSummary] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showPastTask, setShowPastTask] = useState(false);
   
+  // New state for the task modal and task name
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [taskName, setTaskName] = useState('');
+
   const intervalRef = useRef(null);
 
   // Create a ref to store the latest inDoom value
@@ -22,11 +25,11 @@ export default function Timer() {
     inDoomRef.current = inDoom;
   }, [inDoom]);
 
-  const start = () => {
+  // Function to actually start the timer
+  const startTimer = () => {
     setRun(true);
     intervalRef.current = setInterval(() => {
       setTotal(t => t + 1);
-      // Use the ref’s current value so the callback gets the latest state
       if (inDoomRef.current) {
         setDoom(d => d + 1);
       } else {
@@ -35,11 +38,22 @@ export default function Timer() {
     }, 1000);
   };
 
+  // When start button is pressed, show task modal if task not yet set
+  const handleStartClick = () => {
+    setShowTaskModal(true);
+  };
+
+  // Called when user submits the task name
+  const handleTaskSubmit = () => {
+    // Here you could also add extra validation if needed
+    setShowTaskModal(false);
+    startTimer();
+  };
+
   const toggleDoom = () => setDooming(d => !d);
 
   const end = () => {
     clearInterval(intervalRef.current);
-    // Instead of navigating, show the summary modal
     setShowSummary(true);
   };
 
@@ -52,53 +66,94 @@ export default function Timer() {
   };
 
   return (
-    <div>
-      <h2>Task Timer</h2>
-      <p>Total: {fmt(total)}</p>
-      {!running ? (
-        <button onClick={start}>Start Task</button>
-      ) : (
-        <>
-          <button onClick={toggleDoom}>
-            {inDoom ? 'End Doomscroll' : 'Doomscroll'}
-          </button>
-          <button onClick={end}>End Task</button>
-        </>
-      )}
+    <>
+      {/* Nav container placed outside of timer-all */}
+      <div className="nav-container">
+        <button className="my-button" onClick={() => setShowSettings(true)}>
+          Timer
+        </button>
+        <button className="my-button" onClick={() => setShowPastTask(true)}>
+          View Past Task
+        </button>
+      </div>
 
-      {/* Buttons to open Settings and Past Task modals */}
-      <button className="my-button" onClick={() => setShowSettings(true)}>
-        Settings
-      </button>
-      <button className="my-button" onClick={() => setShowPastTask(true)}>
-        View Past Task
-      </button>
-
-      {/* Render Summary as a modal */}
-      {showSummary && (
-        <div className="modal">
-          <Summary 
-            total={total} 
-            focus={focus} 
-            doom={doom} 
-            onClose={() => setShowSummary(false)} 
-          />
+      <div className="timer-all">
+        <div className="timer-wrapper">
+          <h1>Derot Watch</h1>
+          { taskName && <h2> Current Task: {taskName}</h2> }
+          <div className="timer-container">
+            <p className="total-time">{fmt(total)}</p>
+          </div>
+          {!running ? (
+            <button className='my-button' onClick={handleStartClick}>Start Task</button>
+          ) : (
+            <div className="actions-container">
+              <button className="my-button" onClick={toggleDoom}>
+                {inDoom ? 'End Doomscroll' : 'Doomscroll'}
+              </button>
+              <button className="my-button" onClick={end}>End Task</button>
+            </div>
+          )}
         </div>
-      )}
 
-      {/* Render Settings as a modal */}
-      {showSettings && (
-        <div className="modal">
-          <Settings onClose={() => setShowSettings(false)} />
-        </div>
-      )}
+        {showSummary && (
+          <div className="modal">
+            <Summary 
+              total={total} 
+              focus={focus} 
+              doom={doom} 
+              onClose={() => setShowSummary(false)} 
+            />
+          </div>
+        )}
 
-      {/* Render Past Task as a modal */}
-      {showPastTask && (
-        <div className="modal">
-          <PastTask onClose={() => setShowPastTask(false)} />
-        </div>
-      )}
-    </div>
+        {showSettings && (
+          <div className="modal">
+            <Settings onClose={() => setShowSettings(false)} />
+          </div>
+        )}
+
+        {showPastTask && (
+          <div className="modal">
+            <PastTask onClose={() => setShowPastTask(false)} />
+          </div>
+        )}
+
+        {showTaskModal && (
+          <div className="modal">
+            <div 
+              className="task-modal-popup" 
+              style={{
+                background: "#fff",
+                padding: "20px",
+                borderRadius: "8px",
+                width: "90%",
+                maxWidth: "400px",
+                textAlign: "center"
+              }}
+            >
+              <h2>What you working on?</h2>
+              <input 
+                type="text" 
+                placeholder="Enter task name..." 
+                value={taskName} 
+                onChange={e => setTaskName(e.target.value)}
+                style={{marginBottom: "10px", padding: "5px", width: "80%"}}
+              />
+              <br />
+              <div className="timer-container">
+                <button onClick={handleTaskSubmit}>Start Task</button>
+              </div>
+              <button 
+                onClick={() => setShowTaskModal(false)} 
+                style={{ marginLeft: "10px" }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
