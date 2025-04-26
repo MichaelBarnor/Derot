@@ -16,6 +16,7 @@ export default function Timer() {
   // New state for the task modal and task name
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [taskName, setTaskName] = useState('');
+  const [taskNameError, setTaskNameError] = useState(''); // State for error message
 
   const intervalRef = useRef(null);
 
@@ -45,7 +46,11 @@ export default function Timer() {
 
   // Called when user submits the task name
   const handleTaskSubmit = () => {
-    // Here you could also add extra validation if needed
+    if (!taskName.trim()) {
+      setTaskNameError('Task name is required!'); // Set error message if task name is empty
+      return;
+    }
+    setTaskNameError(''); // Clear error message if task name is valid
     setShowTaskModal(false);
     startTimer();
   };
@@ -65,9 +70,20 @@ export default function Timer() {
     return `${mm}:${ss}`;
   };
 
+  // New function to reset the timer and task when closing summary
+  const handleSummaryClose = () => {
+    clearInterval(intervalRef.current);
+    setTotal(0);
+    setFocus(0);
+    setDoom(0);
+    setRun(false);
+    setTaskName('');
+    setShowSummary(false);
+  };
+
   return (
     <>
-      {/* Nav container placed outside of timer-all */}
+      {/* Nav container */}
       <div className="nav-container">
         <button className="my-button" onClick={() => setShowSettings(true)}>
           Timer
@@ -102,7 +118,8 @@ export default function Timer() {
               total={total} 
               focus={focus} 
               doom={doom} 
-              onClose={() => setShowSummary(false)} 
+              taskName={taskName} // Pass taskName to Summary
+              onClose={handleSummaryClose} 
             />
           </div>
         )}
@@ -121,30 +138,22 @@ export default function Timer() {
 
         {showTaskModal && (
           <div className="modal">
-            <div 
-              className="task-modal-popup" 
-              style={{
-                background: "#fff",
-                padding: "20px",
-                borderRadius: "8px",
-                width: "90%",
-                maxWidth: "400px",
-                textAlign: "center"
-              }}
-            >
+            <div className="task-modal-popup">
               <h2>What you working on?</h2>
               <input 
                 type="text" 
                 placeholder="Enter task name..." 
                 value={taskName} 
                 onChange={e => setTaskName(e.target.value)}
-                style={{marginBottom: "10px", padding: "5px", width: "80%"}}
+                style={{ marginBottom: "10px", padding: "5px", width: "80%" }}
               />
+              {taskNameError && <p style={{ color: 'red', fontSize: '0.9rem' }}>{taskNameError}</p>} {/* Display error */}
               <br />
               <div className="timer-container">
-                <button onClick={handleTaskSubmit}>Start Task</button>
+                <button className="my-button" onClick={handleTaskSubmit}>Start Task</button>
               </div>
               <button 
+                className="my-button"
                 onClick={() => setShowTaskModal(false)} 
                 style={{ marginLeft: "10px" }}
               >

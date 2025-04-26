@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Quote() {
-  const [quote,   setQuote]   = useState('');
+  const [quote, setQuote] = useState('');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -20,16 +20,15 @@ function Quote() {
     }
   };
 
-//   useEffect(fetchQuote, []);
-    useEffect(() => {
-        fetchQuote();
+  useEffect(() => {
+    fetchQuote();
   }, []);
 
   return (
-    <div className="App">
+    <div className="home-container">
       <header className="App-header">
-        <h1>We know your screen time is crazy, so let's be mindful</h1>
-        {loading ? <p>Loading…</p> : <p>{quote}</p>}
+        <h1>We know your screen time is crazy, so let's be mindful!</h1>
+        {loading ? <p>Loading…</p> : <p>"{quote}"</p>}
         <button className="my-button" onClick={() => navigate('/timer')}>
           Let's start here
         </button>

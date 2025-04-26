@@ -77,7 +77,7 @@ body {
   align-items: center;
   color:white
 }
-
+.task-modal-popup,
 .settings-popup,
 .past-task-popup,
 .summary-popup {
@@ -109,4 +109,13 @@ body {
   font-size: 5rem; /* Increase this value as needed */
   font-weight: bold;
   color: #ffffff; /* Optional, ensures high contrast */
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;  /* full viewport height */
+  text-align: center;
 }
