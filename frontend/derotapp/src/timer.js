@@ -29,22 +29,29 @@ export default function Timer() {
   }, [inDoom]);
 
   // Function to start the doomscroll countdown
-  const startDoomCountdown = () => {
-    fetchSelectedTime(); // fetch the timer option from backend
-    setCountdown(selectedTime); // initialize countdown with the selected time value
-    setDooming(true);
+  const startDoomCountdown = async () => {
+    try {
+      const response = await fetch('http://localhost/Derot_DB/backend/api/get_latest_timer_option.php');
+      const data = await response.json();
+      const timerValue = data.selected_time || 0;
+      setSelectedTime(timerValue);
+      setCountdown(timerValue);
+      setDooming(true);
 
-    const doomInterval = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(doomInterval); // Stop countdown
-          setShowDoomPopup(true); // Show popup
-          audioRef.current.play(); // Play alert sound
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+      const doomInterval = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(doomInterval); // Stop countdown
+            setShowDoomPopup(true); // Show popup
+            audioRef.current.play(); // Play alert sound
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch (error) {
+      console.error('Error fetching timer option:', error);
+    }
   };
 
   const toggleDoom = () => {
@@ -84,23 +91,18 @@ export default function Timer() {
   // Called when user submits the task name
   const handleTaskSubmit = () => {
     if (!taskName.trim()) {
-      setTaskNameError('Task name is required!'); // Set error message if task name is empty
+      setTaskNameError('Task name is required!');
       return;
     }
-    setTaskNameError(''); // Clear error message if task name is valid
+    setTaskNameError('');
+    // Reset doomscroll state so a new task isn't already in doomscroll mode.
+    setDoom(0);
+    setCountdown(0);
+    setDooming(false);
+    setShowDoomPopup(false);
+
     setShowTaskModal(false);
     startTimer();
-  };
-
-  // Fetch the latest timer option from the backend
-  const fetchSelectedTime = async () => {
-    try {
-      const response = await fetch('http://localhost/Derot_DB/backend/api/get_latest_timer_option.php');
-      const data = await response.json();
-      setSelectedTime(data.selected_time || 0); // Set the selected time in seconds
-    } catch (error) {
-      console.error('Error fetching selected timer option:', error);
-    }
   };
 
   const end = () => {
