@@ -4,27 +4,64 @@ import Settings from './settings';
 import PastTask from './past-task';
 
 export default function Timer() {
-  const [total, setTotal]     = useState(0);
-  const [focus, setFocus]     = useState(0);
-  const [doom, setDoom]       = useState(0);
-  const [running, setRun]     = useState(false);
-  const [inDoom, setDooming]  = useState(false);
+  const [total, setTotal] = useState(0);
+  const [focus, setFocus] = useState(0);
+  const [doom, setDoom] = useState(0);
+  const [running, setRun] = useState(false);
+  const [inDoom, setDooming] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showPastTask, setShowPastTask] = useState(false);
-  
-  // New state for the task modal and task name
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [taskName, setTaskName] = useState('');
-  const [taskNameError, setTaskNameError] = useState(''); // State for error message
-
+  const [taskNameError, setTaskNameError] = useState('');
+  const [selectedTime, setSelectedTime] = useState(0); // Store the selected timer option
+  const [showDoomPopup, setShowDoomPopup] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  
   const intervalRef = useRef(null);
+  const audioRef = useRef(new Audio('/alert.mp3')); // store audio element
 
   // Create a ref to store the latest inDoom value
-  const inDoomRef = useRef(inDoom);
+  const inDoomRef = useRef(false);
   useEffect(() => {
     inDoomRef.current = inDoom;
   }, [inDoom]);
+
+  // Function to start the doomscroll countdown
+  const startDoomCountdown = () => {
+    fetchSelectedTime(); // fetch the timer option from backend
+    setCountdown(selectedTime); // initialize countdown with the selected time value
+    setDooming(true);
+
+    const doomInterval = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(doomInterval); // Stop countdown
+          setShowDoomPopup(true); // Show popup
+          audioRef.current.play(); // Play alert sound
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const toggleDoom = () => {
+    if (inDoom) {
+      setDooming(false);
+      setCountdown(0);
+    } else {
+      startDoomCountdown();
+    }
+  };
+
+  // Function to close the popup and stop the audio
+  const closeDoomPopup = () => {
+    setShowDoomPopup(false);
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0;
+  };
 
   // Function to actually start the timer
   const startTimer = () => {
@@ -55,7 +92,16 @@ export default function Timer() {
     startTimer();
   };
 
-  const toggleDoom = () => setDooming(d => !d);
+  // Fetch the latest timer option from the backend
+  const fetchSelectedTime = async () => {
+    try {
+      const response = await fetch('http://localhost/Derot_DB/backend/api/get_latest_timer_option.php');
+      const data = await response.json();
+      setSelectedTime(data.selected_time || 0); // Set the selected time in seconds
+    } catch (error) {
+      console.error('Error fetching selected timer option:', error);
+    }
+  };
 
   const end = () => {
     clearInterval(intervalRef.current);
@@ -96,30 +142,34 @@ export default function Timer() {
       <div className="timer-all">
         <div className="timer-wrapper">
           <h1>Derot Watch</h1>
-          { taskName && <h2> Current Task: {taskName}</h2> }
+          {taskName && <h2> Current Task: {taskName}</h2>}
           <div className="timer-container">
             <p className="total-time">{fmt(total)}</p>
           </div>
           {!running ? (
-            <button className='my-button' onClick={handleStartClick}>Start Task</button>
+            <button className="my-button" onClick={handleStartClick}>
+              Start Task
+            </button>
           ) : (
             <div className="actions-container">
               <button className="my-button" onClick={toggleDoom}>
                 {inDoom ? 'End Doomscroll' : 'Doomscroll'}
               </button>
-              <button className="my-button" onClick={end}>End Task</button>
+              <button className="my-button" onClick={end}>
+                End Task
+              </button>
             </div>
           )}
         </div>
 
         {showSummary && (
           <div className="modal">
-            <Summary 
-              total={total} 
-              focus={focus} 
-              doom={doom} 
+            <Summary
+              total={total}
+              focus={focus}
+              doom={doom}
               taskName={taskName} // Pass taskName to Summary
-              onClose={handleSummaryClose} 
+              onClose={handleSummaryClose}
             />
           </div>
         )}
@@ -140,24 +190,38 @@ export default function Timer() {
           <div className="modal">
             <div className="task-modal-popup">
               <h2>What you working on?</h2>
-              <input 
-                type="text" 
-                placeholder="Enter task name..." 
-                value={taskName} 
+              <input
+                type="text"
+                placeholder="Enter task name..."
+                value={taskName}
                 onChange={e => setTaskName(e.target.value)}
-                style={{ marginBottom: "10px", padding: "5px", width: "80%" }}
+                style={{ marginBottom: '10px', padding: '5px', width: '80%' }}
               />
               {taskNameError && <p style={{ color: 'red', fontSize: '0.9rem' }}>{taskNameError}</p>} {/* Display error */}
               <br />
               <div className="timer-container">
-                <button className="my-button" onClick={handleTaskSubmit}>Start Task</button>
+                <button className="my-button" onClick={handleTaskSubmit}>
+                  Start Task
+                </button>
               </div>
-              <button 
+              <button
                 className="my-button"
-                onClick={() => setShowTaskModal(false)} 
-                style={{ marginLeft: "10px" }}
+                onClick={() => setShowTaskModal(false)}
+                style={{ marginLeft: '10px' }}
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        {showDoomPopup && (
+          <div className="modal">
+            <div className="doom-popup">
+              <h2>STOP SCROLLING!!!</h2>
+              <p>Cmon let's get this munyun💵</p>
+              <button className="my-button" onClick={closeDoomPopup}>
+                Close
               </button>
             </div>
           </div>

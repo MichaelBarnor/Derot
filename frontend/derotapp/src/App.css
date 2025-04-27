@@ -1,6 +1,5 @@
-/* Global Styles */
 body {
-  background: #282c34; /* Dark background similar to Pomofocus */
+  background: #282c34;
   color: #ffffff;
   font-family: 'Helvetica Neue', Arial, sans-serif;
   margin: 0;
@@ -15,20 +14,16 @@ body {
   border-radius: 15px;
   width: 90%;
   max-width: 400px;
-  margin: 30px auto; /* centers horizontally with extra spacing on top */
+  margin: 30px auto; 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Timer wrapper to center content vertically (optional) */
+/* Timer wrapper to center content vertically */
 .timer-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* Remove or adjust the min-height value */
-  /* min-height: 100vh; */
-  /* Option 1: Remove min-height completely */
-  /* Option 2: Use a smaller value, e.g.: */
   min-height: auto;
   text-align: center;
   padding: 20px;
@@ -36,7 +31,7 @@ body {
 
 /* Reduce space below the Current Task heading */
 .timer-wrapper h2 {
-  margin-bottom: 0.01rem;  /* Adjust value as needed */
+  margin-bottom: 0.01rem;
 }
 
 /* Timer container used for grouping elements */
@@ -47,9 +42,9 @@ body {
   margin: 5px auto;
 }
 
-/* Button styling */
+
 .my-button {
-  background: #ff4757; /* Red accent color */
+  background: #ff4757;
   border: none;
   color: #fff;
   font-size: 1rem;
@@ -64,7 +59,6 @@ body {
   background: #e84118;
 }
 
-/* Modal remains unchanged */
 .modal {
   position: fixed;
   top: 0;
@@ -94,21 +88,21 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px; /* add margin-top as desired */
+  margin-top: 20px; 
   margin-bottom: 20px;
 }
 
 .actions-container {
   display: flex;
   justify-content: center;
-  gap: 10px;  /* Adjust the gap value as desired */
+  gap: 10px; 
   margin-top: 10px;
 }
 
 .total-time {
-  font-size: 5rem; /* Increase this value as needed */
+  font-size: 5rem; 
   font-weight: bold;
-  color: #ffffff; /* Optional, ensures high contrast */
+  color: #ffffff; 
 }
 
 .home-container {
@@ -116,6 +110,28 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;  /* full viewport height */
+  height: 100vh;  
   text-align: center;
+}
+
+/* Doomscrolling popup styling */
+.doom-popup {
+  background: #b2373f;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.doom-popup h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.doom-popup p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
 }
